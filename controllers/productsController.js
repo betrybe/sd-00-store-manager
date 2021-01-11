@@ -11,19 +11,29 @@ const {
 
 const productsController = express.Router();
 
+const STATUS = {
+  SUCESSO: 200,
+  CADASTRADO: 201,
+  INVALIDO: 422,
+  ERROR: 500,
+};
+
+const ERR_MESSAGE = 'Oops! Something went wrong.';
+
 // requisito 1 - crie um endpoint para o cadastro de produtos;
 productsController.post('/', verifyProduct, async (req, res) => {
   try {
     const { name, quantity } = req.body;
     const newProduct = await createProduct(name, quantity);
 
-    return res.status(201).json(newProduct);
+    return res.status(STATUS.CADASTRADO).json(newProduct);
   } catch (err) {
     if (err.code === 'invalid_data') {
-      return res.status(422).json({ err: { code: err.code, message: err.message } });
+      return res
+        .status(STATUS.INVALIDO).json({ err: { code: err.code, message: err.message } });
     }
 
-    return res.status(500).json({ message: 'Oops! Something went wrong.' });
+    return res.status(STATUS.ERROR).json({ message: ERR_MESSAGE });
   }
 });
 
@@ -32,9 +42,9 @@ productsController.get('/', async (_req, res) => {
   try {
     const allProducts = await getAllProducts();
 
-    return res.status(200).json({ products: allProducts });
+    return res.status(STATUS.SUCESSO).json({ products: allProducts });
   } catch {
-    return res.status(500).json({ message: 'Oops! Something went wrong.' });
+    return res.status(STATUS.ERROR).json({ message: ERR_MESSAGE });
   }
 });
 
@@ -44,9 +54,9 @@ productsController.get('/:id', verifyId, async (req, res) => {
   try {
     const product = await findByProductId(id);
 
-    return res.status(200).json(product);
+    return res.status(STATUS.SUCESSO).json(product);
   } catch (err) {
-    return res.status(500).json({ message: 'Oops! Something went wrong.' });
+    return res.status(STATUS.ERROR).json({ message: ERR_MESSAGE });
   }
 });
 
@@ -58,9 +68,9 @@ productsController.put('/:id', verifyProduct, async (req, res) => {
   try {
     const updatedProduct = await updateProductById(id, { name, quantity });
 
-    return res.status(200).json(updatedProduct);
+    return res.status(STATUS.SUCESSO).json(updatedProduct);
   } catch (err) {
-    return res.status(500).json({ message: 'Oops! Something went wrong.' });
+    return res.status(STATUS.ERROR).json({ message: ERR_MESSAGE });
   }
 });
 
@@ -71,9 +81,9 @@ productsController.delete('/:id', verifyId, async (req, res) => {
   try {
     const deletedProduct = await excludeProductById(id);
 
-    return res.status(200).json(deletedProduct);
+    return res.status(STATUS.SUCESSO).json(deletedProduct);
   } catch (err) {
-    return res.status(500).json({ message: 'Oops! Something went wrong.' });
+    return res.status(STATUS.ERROR).json({ message: ERR_MESSAGE });
   }
 });
 

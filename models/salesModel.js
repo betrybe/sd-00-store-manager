@@ -2,14 +2,16 @@ const { ObjectId } = require('mongodb');
 const getCollection = require('./connection');
 
 const createSales = async (itensSold) => {
-  const newSale = await getCollection('sales').then((sales) => sales.insertOne({ itensSold }));
+  const newSale = await getCollection('sales')
+    .then((sales) => sales.insertOne({ itensSold }));
 
   return { _id: newSale.insertedId, itensSold };
 };
 
 const findBySaleId = async (id) => {
   if (ObjectId.isValid(id)) {
-    const sale = await getCollection('sales').then((sales) => sales.findOne({ _id: ObjectId(id) }));
+    const sale = await getCollection('sales')
+      .then((sales) => sales.findOne({ _id: ObjectId(id) }));
 
     return sale;
   }

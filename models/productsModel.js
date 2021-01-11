@@ -16,7 +16,8 @@ const excludeProductById = async (id) => {
 };
 
 const findByProductName = async (name) => {
-  const product = await getCollection('products').then((products) => products.findOne({ name }));
+  const product = await getCollection('products')
+    .then((products) => products.findOne({ name }));
 
   return product;
 };
